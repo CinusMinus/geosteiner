@@ -1,0 +1,11 @@
+[package]
+name = "steinertree-rs"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = ["libgeosteiner"]
+
+[dependencies]
+geosteiner = { path = "libgeosteiner" }
+itertools = "0.13"
