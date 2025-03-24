@@ -2,7 +2,6 @@ use std::env::args;
 use std::io;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
-use itertools::Itertools;
 use geosteiner::{euclidean_steiner_tree, rectilinear_steiner_tree};
 
 #[derive(Debug)]
@@ -143,6 +142,6 @@ fn main() {
         TreeType::Euclidean => euclidean_steiner_tree(&points),
         TreeType::Rectilinear => rectilinear_steiner_tree(&points),
     };
-    println!("steiner = [{}]", tree.steiner_points.iter().map(|[x, y]| format!("({x}, {y})")).join(", "));
-    println!("edges = [{}]", tree.edges.iter().map(|[i, j]| format!("({i}, {j})")).join(", "));
+    println!("steiner = {:?}", tree.steiner_points);
+    println!("edges = {:?}", tree.edges);
 }
