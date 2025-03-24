@@ -1,11 +1,12 @@
 [package]
-name = "steinertree-rs"
+name = "geosteiner"
 version = "0.1.0"
-edition = "2021"
+authors = ["Geosteiner: David M. Warme, Pawel Winter and Martin Zachariasen", "Rust Wrapper: Max Göttlicher"]
+edition = "2018"
+license = "CC-BY-4.0"
 
-[workspace]
-members = ["libgeosteiner"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-geosteiner = { path = "libgeosteiner" }
-itertools = "0.13"
+[build-dependencies]
+bindgen = "0.71"
+autotools = "0.2"
