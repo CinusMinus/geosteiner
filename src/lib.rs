@@ -45,7 +45,7 @@ pub fn euclidean_steiner_tree(points: &[[f64; 2]]) -> SteinerTree {
     let mut num_steiner = 0;
     let mut steiner_coords = vec![0.0; 2 * points.len()];
     let mut num_edges = 0;
-    let mut edges = vec![0 as c_int; 2 * points.len() + 2];
+    let mut edges = vec![0 as c_int; 4 * points.len()];
     unsafe {
         init_gst();
         let ok = gst_esmt(
@@ -89,7 +89,7 @@ pub fn rectilinear_steiner_tree(points: &[[f64; 2]]) -> SteinerTree {
     let mut num_steiner = 0;
     let mut steiner_coords = vec![0.0; 2 * points.len()];
     let mut num_edges = 0;
-    let mut edges = vec![0 as c_int; 2 * points.len()];
+    let mut edges = vec![0 as c_int; 4 * points.len()];
     unsafe {
         init_gst();
         let ok = gst_rsmt(
@@ -117,21 +117,43 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn line() {
         let terminals = [[0.0, 0.0], [0.0, 1.0]];
-        let tree = euclidean_steiner_tree(&terminals);
-        assert_eq!([[0.0f64, 0.0]; 0], *tree.steiner_points);
-        assert_eq!(1.0, tree.length);
-        assert_eq!([[0, 1]], tree.edges.as_slice());
+        let esmt = euclidean_steiner_tree(&terminals);
+        assert_eq!([[0.0f64, 0.0]; 0], *esmt.steiner_points);
+        assert_eq!(1.0, esmt.length);
+        assert_eq!([[0, 1]], esmt.edges.as_slice());
+        let rsmt = rectilinear_steiner_tree(&terminals);
+        assert!(esmt.steiner_points.is_empty());
+        assert_eq!(esmt.length, 1.0);
+        assert_eq!(esmt.edges, rsmt.edges);
     }
 
     #[test]
     fn square() {
         let terms = [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]];
-        let tree = euclidean_steiner_tree(&terms);
-        assert_eq!(2, tree.steiner_points.len());
-        assert_eq!(5, tree.edges.len(), "unecpected edges: {:?}", tree.edges);
-        assert!(2.7320 < tree.length, "2.7320 >= {}", tree.length);
-        assert!(2.7321 > tree.length, "2.7321 <= {}", tree.length);
+        let esmt = euclidean_steiner_tree(&terms);
+        assert_eq!(2, esmt.steiner_points.len());
+        assert_eq!(5, esmt.edges.len(), "unecpected edges: {:?}", esmt.edges);
+        assert!(2.7320 < esmt.length, "2.7320 >= {}", esmt.length);
+        assert!(2.7321 > esmt.length, "2.7321 <= {}", esmt.length);
+
+        let rsmt = rectilinear_steiner_tree(&terms);
+        assert_eq!(3.0, rsmt.length);
+        assert!(rsmt.steiner_points.is_empty());
+        assert_eq!(3, rsmt.edges.len());
+    }
+
+    #[test]
+    fn grid_4x4() {
+        let grid = (0..4).flat_map(|x| (0..4).map(move |y| [x as f64, y as f64])).collect::<Vec<_>>();
+        let esmt = euclidean_steiner_tree(&grid);
+        assert_eq!(10, esmt.steiner_points.len());
+        assert_eq!(25, esmt.edges.len());
+        assert!(5.0 * 2.7320 < esmt.length, "5 * 2.7320 >= {}", esmt.length);
+        assert!(5.0 * 2.7321 > esmt.length, "5 * 2.7321 <= {}", esmt.length);
+        let rsmt = rectilinear_steiner_tree(&grid);
+        assert_eq!(15.0, rsmt.length);
+        assert!(rsmt.steiner_points.is_empty());
     }
 }
