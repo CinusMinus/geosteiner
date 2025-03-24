@@ -1,6 +1,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![warn(missing_docs)]
 
 use crate::bindings::{gst_esmt, gst_open_geosteiner, gst_rsmt};
 use std::os::raw::{c_double, c_int};
@@ -12,9 +13,19 @@ mod bindings {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
 
+/// A Steiner tree constructed on a separate set of terminals as returned by the Steiner tree methods.
+///
+/// Contains the steiner points and edges as well the length of the tree.
+/// Terminal positions are stored externally.
 pub struct SteinerTree {
+    /// Steiner point positions
     pub steiner_points: Vec<[f64; 2]>,
+    /// Edges as pairs of (start, end)
+    ///
+    /// start and end indices in the range 0..terminals.len() refer to terminals.
+    /// The remaining indices refer to steiner points offset by the number of terminals.
     pub edges: Vec<[usize; 2]>,
+    /// Total edge length of the Steiner tree given in the respective metric.
     pub length: f64,
 }
 
@@ -27,6 +38,7 @@ fn init_gst() {
     });
 }
 
+/// Construct a Euclidean minimum Steiner tree (ESMT) on `points`.
 pub fn euclidean_steiner_tree(points: &[[f64; 2]]) -> SteinerTree {
     let mut length: f64 = 0.0;
     let mut num_steiner = 0;
@@ -70,6 +82,7 @@ fn reconstruct_tree(
     }
 }
 
+/// Construct a rectilinear minimum Steiner tree (RSMT) on the given terminals.
 pub fn rectilinear_steiner_tree(points: &[[f64; 2]]) -> SteinerTree {
     let mut length: f64 = 0.0;
     let mut num_steiner = 0;
