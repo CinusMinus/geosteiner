@@ -1,6 +1,7 @@
 [package]
 name = "geosteiner"
 description = "compute Euclidean and recitlinear Steiner trees using the geosteiner C library"
+repository = "https://github.com/CinusMinus/geosteiner"
 version = "0.1.0"
 authors = ["Geosteiner: David M. Warme, Pawel Winter and Martin Zachariasen", "Rust Wrapper: Max Göttlicher"]
 edition = "2018"
